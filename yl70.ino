@@ -7,6 +7,12 @@
 int endcoder_timer = 20;
 int enc[2];
 bool direction; // true=FRONT, false=BACK
+unsigned long time_rotation = millis();
+unsigned long Black_rotation = millis();
+unsigned long Black_currentTime = millis();
+
+unsigned long White_rotation = millis();
+unsigned long White_currentTime = millis();
 void setup()
 {
  Serial.begin(9600);
@@ -28,6 +34,7 @@ void loop()
  delay(endcoder_timer);
 
 //Caclulate direction
+#ifdef DIRECTION
  if(enc[0] == 1 && enc[1] == 1){
    enc[0] = digitalRead(ENCODER_1);
    enc[1] = digitalRead(ENCODER_2);
@@ -41,6 +48,29 @@ void loop()
      Serial.println("BACK");
    }
  } 
-
- 
+#endif
+//calculate rotation
+Black_currentTime = millis();
+while(enc[0] == 1){
+  //start timer  
+  enc[0] = digitalRead(ENCODER_1);
 }
+Black_rotation = millis() - Black_currentTime;
+
+White_currentTime = millis();
+while(enc[0] == 0){
+  //start timer  
+  enc[0] = digitalRead(ENCODER_1);
+}
+White_rotation = millis() - White_currentTime;
+time_rotation = White_rotation + Black_rotation;
+if(time_rotation > 0){
+Serial.print("Time: ");
+Serial.print(time_rotation);
+Serial.print("ms ");
+Serial.print(19.5/time_rotation*36);
+Serial.println("km/ora");
+}
+
+}
+
